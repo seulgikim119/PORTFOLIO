@@ -1,0 +1,177 @@
+﻿# skill.md
+
+## 문서 운영 규칙
+- 이 문서는 일회성 문서가 아니라 작업이 진행될수록 계속 누적되는 기록 문서로 관리한다.
+- 매 작업마다 아래 6개 항목을 반드시 갱신한다.
+  - 이번 작업 목표
+  - 확정된 UX 정책
+  - 화면 구조
+  - 상태관리 항목
+  - localStorage key 설계
+  - 다음 작업
+- 코드 수정 전에도, 분석/기획 단계 결과를 먼저 이 문서에 반영한다.
+
+## 이번 작업 목표
+- 01 · Hope 섹션 타이틀을 줄바꿈 없이 1줄로 유지되도록 CSS 오버라이드 적용
+- ethicallifeworld.com UX/UI 패턴 분석 → 포트폴리오 반영
+- 페이지 최초 진입 시 로딩 인트로 시퀀스(`PageLoader`) 추가
+- Hero 섹션에 "AVAILABLE FOR WORK" 실시간 상태 배지 추가
+- Hope 섹션 하단에 툴/역량 크레덴셜 스트립 추가
+
+## 확정된 UX 정책
+- 01 · Hope 타이틀은 데스크톱 레이아웃에서 1줄 고정(`nowrap`)으로 표시한다.
+- 카드 탐색 섹션에서는 페이지 스크롤보다 섹션 내부 카드 전환을 우선한다.
+- 카드의 첫/마지막 경계에서만 다음/이전 섹션으로 스크롤 이동을 허용한다.
+- 스크롤 이벤트는 콘텐츠 여백 포함 섹션 전체에서 일관되게 캡처되어야 한다.
+- 트랙패드 관성(미세 역방향 델타)으로 카드가 되감기지 않도록 방향 전환 로직을 분리한다.
+- 휠 전환 정책: 임계치 `28`, 잠금 시간 `380ms`를 기본값으로 사용한다.
+- 섹션 고정 시작 정책: `#happiness` 섹션 `top <= window.innerHeight * 0.9` 시점부터 휠 이벤트를 섹션에서 우선 소비한다.
+- 카드 진입 애니메이션은 fade-up 단일 계열만 사용하고, 회전/바운스/패럴랙스 추가는 금지한다.
+- 순차 등장 순서: `media -> title -> description` 고정.
+- hover 효과는 이미지 `scale(1.02 ~ 1.05)` 범위의 미세 확대만 허용한다.
+- 섹션 진입 애니메이션은 1회 트리거 방식으로 재생하고, 반복 재생으로 인한 시각적 피로를 줄인다.
+- 카드 등장 시작점은 섹션 하단 중앙(bottom-center)으로 고정하고 fan-out 형태로 전개한다.
+- 03 섹션 메인 스테이지는 부모 컨테이너 가용 영역을 100% 기준으로 사용한다.
+
+## 화면 구조
+- App
+  - `main.scroller`
+    - `SnapSection#home`
+    - `SnapSection#hope`
+      - `#hope .section-shell > h2.serif` (CSS 오버라이드: `white-space: nowrap`, `max-width: none`)
+    - `SnapSection#trust`
+    - `SnapSection#happiness`
+      - `SectionShell`
+        - `section-shell-body` (wheel capture 영역)
+          - `happiness-stage-wrap`
+            - 배경 타이포/글로우
+            - `happiness-card-layer` (카드 스택)
+              - `happiness-card-media` (이미지)
+              - `happiness-card-title` (타이틀)
+              - `happiness-card-desc` (설명)
+            - `happiness-stage-ui` (indicator/guide)
+    - `SnapSection#luck`
+
+## 상태관리 항목
+- 변경 없음 (이번 작업은 CSS만 수정)
+- 전역(App)
+  - `tweaks`
+  - `tweakOpen`
+  - `section`
+  - `active`
+- 03 · HAPPINESS 섹션
+  - `activeCard`
+  - `dragging`
+  - `hasEntered`
+  - `entryMotionActive`
+  - `sectionEnterRef` (ref)
+  - `pointerStartX` (ref)
+  - `pointerDeltaX` (ref)
+  - `wheelLockUntil` (ref)
+  - `wheelDeltaY` (ref)
+  - `lastWheelDirection` (ref)
+
+## localStorage key 설계
+- 변경 없음 (신규 key 추가 없음)
+- `tweaks-np`
+  - 용도: tweak 패널 설정값 저장
+  - 저장 주체: `App` (`useEffect`)
+  - 기본값 소스: `TWEAK_DEFAULTS`
+- 카드 진입 애니메이션 상태는 세션 저장 없이 런타임 상태로만 관리(추가 localStorage key 없음).
+
+## 다음 작업
+1. 반응형 뷰(특히 모바일)에서 Hope 타이틀 1줄 고정 시 overflow 여부 확인
+2. 필요 시 모바일 구간만 `white-space: normal` 예외를 미디어쿼리로 분리
+3. 수동 검증 (이전 작업)
+   - 스크롤 진입 시 순차 등장 체감 확인
+   - 초기 진입 시 bottom-center 회전 등장 자연스러운지 확인
+   - `happiness-stage-wrap`가 세로 영역을 충분히 채우는지 확인
+   - 카드 변경 시 애니메이션 톤 과하지 않은지 확인
+   - 트랙패드/마우스휠 동시 확인
+4. 필요 시 delay(120/240ms)와 hover scale(1.03) 미세 조정
+5. 신규 추가 요소 검증
+   - `PageLoader` 2.5초 타이밍이 너무 길거나 짧지 않은지 체감 확인
+   - `AVAILABLE FOR WORK` 배지 문구·색상이 브랜드 톤과 맞는지 확인
+   - 크레덴셜 스트립 툴 목록(`TOOLS` 상수, `components.jsx` 상단)을 실제 사용 툴 기준으로 업데이트
+   - Hope 섹션 세로 높이가 크레덴셜 스트립 추가 후 넘치지 않는지 확인
+
+---
+
+## 작업 로그
+### 2026-04-21 (4차) — 01 · Hope 타이틀 1줄 고정
+- 요청: `<SectionShell ... title="경험을 수집하고, 구조화하여, 의사결정으로 연결하는 디자이너">` 문구를 줄바꿈 없이 표시
+- 반영: `assets/styles.css`에 `#hope .section-shell > h2.serif { white-space: nowrap; max-width: none !important; }` 추가
+- 범위: CSS만 수정, 텍스트/컴포넌트 구조/상태 로직 미변경
+
+### 2026-04-21 (1차)
+- 요청: `skill.md`를 누적형 기록 문서로 운영하는 규칙 확정
+- 반영: 문서 구조를 6개 고정 항목 중심으로 재편
+- 반영: 03 섹션 스크롤 이슈 분석 결과와 수정 계획을 "다음 작업"에 등록
+- 반영: 03 섹션 휠 캡처를 `section-shell-body`로 이동, `lastWheelDirection` 상태 머신 추가
+- 반영: 경계 스크롤 통과 조건 유지 + 전환값 조정(임계치 `28`, 잠금 `380ms`)
+- 반영: `#happiness` 섹션의 `top <= 90vh` 조건 게이트를 휠 핸들러에 추가
+- 정리: 카드 섹션 디벨롭 기준(`fade-up/stagger/미세 hover/톤 유지`)을 구현 방향으로 문서화
+- 반영: `hasEntered + IntersectionObserver`로 섹션 진입 1회 트리거 구현
+- 반영: 카드 내부 순서를 `media -> title -> desc`로 구성하고 stagger fade-up 적용
+- 반영: hover 시 이미지 `scale(1.03)` 미세 확대 적용
+- 반영: 카드 기본 상태를 bottom-center 비노출로 두고, 회전 fan-out 등장 모션 추가
+- 반영: `happiness-stage-wrap`와 래퍼에 `width/height: 100%` 적용, 카드 레이어도 `flex:1`로 확장
+
+### 2026-04-21 (3차) — 카드 등장 트리거 스크롤 드리븐 방식으로 전환
+
+**요청 내용**
+- 섹션 wrap이 화면에 100% 등장한 뒤 멈춤 → 스크롤 시 하단 센터 기준 카드 등장
+
+**상태 머신 변경**
+- 기존: `hasEntered(bool)` + IntersectionObserver threshold 0.35 → 자동 등장
+- 변경: `phase: 'idle' | 'entering' | 'active'` 3단계 상태 머신
+
+| phase | 조건 | 동작 |
+|---|---|---|
+| `idle` | 섹션 진입 전·진입 직후 | 카드 화면 밖(하단) 대기, 가이드 텍스트 "스크롤하면 카드가 등장합니다" |
+| `entering` | 첫 스크롤 다운 감지 | 카드 하단→센터 등장 애니메이션, 스크롤 블록 (820ms) |
+| `active` | 애니메이션 완료 후 | 기존 카드 탐색 (휠/드래그) |
+
+**섹션 100% 진입 감지 방법**
+- `rect.top < 8px && rect.bottom >= innerHeight - 8px` (snap 완료 기준)
+- IntersectionObserver 제거, 휠 핸들러 내에서 직접 계산
+
+**CSS 변경**
+- 카드 초기 위치: `top: 90%` → `top: 112%` (컨테이너 완전히 아래, overflow:hidden으로 클리핑)
+- 초기 rotate: 각도 유지 → `0deg` (바텀 센터에서 수직 상승 강조)
+- 초기 scale: `.82` → `.88`
+- 전환 duration: `700ms` → `750ms`, `is-entry-motion` 시 `820ms`
+
+**수정 파일**
+- `assets/js/components.jsx`: `HappinessSection` 전체 재작성
+- `assets/styles.css`: `.happiness-card` 초기 위치/scale, `.is-entry-motion` duration
+
+### 2026-04-21 (2차) — ethicallifeworld.com 레퍼런스 반영
+**참조 사이트 분석 요약**
+- 사이트: https://ethicallifeworld.com/
+- 주요 패턴: 필름스트립 로딩 시퀀스 / 긴급성 배너(FREE DELIVERY) / 신뢰 크레덴셜 블록(Pharmacist Formulated) / 인피니티 티커 / 회전 캐러셀
+
+**반영 항목**
+
+1. `PageLoader` 컴포넌트 신규 추가 (`components.jsx` 상단)
+   - "SEULGI" 6글자가 한 글자씩 아래에서 위로 fade-in (85ms 간격 stagger)
+   - 클로버 녹색(`--clover`) 진행 바 1.7초 fill 애니메이션
+   - 1.9초 후 exit 클래스 적용 → 2.5초에 `onDone()` 호출, 메인 화면 등장
+   - `app.jsx`: `loaded` state 추가, `!loaded && <PageLoader onDone=...>` 조건부 렌더
+
+2. `hero-available` 배지 추가 (`components.jsx` → `Hero` 컴포넌트)
+   - 위치: `hero-kicker` 바로 위
+   - 초록 점(pulse 애니메이션) + "AVAILABLE FOR WORK" 모노 텍스트
+   - 스타일: 반투명 녹색 pill, border `rgba(111,184,96,.38)`
+
+3. 크레덴셜 스트립 추가 (`components.jsx` → `HopeSection` 컴포넌트)
+   - `TOOLS` 상수: `['Figma','FigJam','Notion','Zeplin','Miro','Jira','Framer','HTML/CSS','After Effects']`
+   - "VERIFIED SKILLS" 뱃지 + "TOOLS & METHODS" 라벨 헤더
+   - pill hover: border-color → `--clover`, bg → `--sage`
+
+**수정 파일 목록**
+| 파일 | 변경 내용 |
+|---|---|
+| `assets/styles.css` | `.page-loader` / `.hero-available` / `.credential-strip` 스타일 블록 추가 |
+| `assets/js/components.jsx` | `PageLoader` 컴포넌트 추가, `Hero`에 배지 삽입, `HopeSection`에 크레덴셜 스트립 삽입 |
+| `app.jsx` | `loaded` state 추가, `PageLoader` 조건부 렌더 |
