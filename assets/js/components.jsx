@@ -1,4 +1,4 @@
-﻿const { useState, useEffect, useRef, useMemo } = React;
+const { useState, useEffect, useRef } = React;
 
 /* =======================================================
    PAGE LOADER
@@ -12,22 +12,22 @@ function PageLoader({ onDone }) {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [onDone]);
   return (
-    <div className={`page-loader${exit ? ' page-loader--exit' : ''}`}>
-      <div className="page-loader-inner">
-        <div className="page-loader-letters">
+    <div className={`page_loader${exit ? ' page_loader__exit' : ''}`}>
+      <div className="page_loader_inner">
+        <div className="page_loader_letters">
           {'SEULGI'.split('').map((ch, i) => (
             <span
               key={i}
-              className="page-loader-ch serif"
+              className="page_loader_ch serif"
               style={{ animationDelay: `${i * 85}ms` }}>
               {ch}
             </span>
           ))}
         </div>
-        <div className="page-loader-track">
-          <div className="page-loader-fill" />
+        <div className="page_loader_track">
+          <div className="page_loader_fill" />
         </div>
-        <p className="mono page-loader-label">UX · UI DESIGNER · PORTFOLIO · 2026</p>
+        <p className="mono page_loader_label">UX · UI DESIGNER · PORTFOLIO · 2026</p>
       </div>
     </div>
   );
@@ -36,16 +36,9 @@ function PageLoader({ onDone }) {
 /* =======================================================
    COMPONENTS
    ======================================================= */
-function CloverPhoto({ size = 560, activeIdx = -1, onHover, onClick, rotation = 0, smooth = false }) {
-  // New PNG: square 2052횞2052, clover centered, 4 leaves meet at exact center.
-  // Cluster span roughly (27%, 27%) -> (73%, 73%). Each leaf center at about 10% from the middle.
-  const pivotX = '50%',pivotY = '50%';
-  const hotspots = [
-  { key: 'hope', left: '40%', top: '40%' }, // top-left leaf
-  { key: 'trust', left: '60%', top: '40%' }, // top-right leaf
-  { key: 'happiness', left: '60%', top: '60%' }, // bottom-right leaf
-  { key: 'luck', left: '40%', top: '60%' } // bottom-left leaf
-  ];
+function CloverPhoto({ size = 560, activeIdx = -1, rotation = 0, smooth = false }) {
+  const pivotX = '50%';
+  const pivotY = '50%';
   return (
     <div style={{ width: size, height: size, position: 'relative', overflow: 'visible' }}>
       <div style={{
@@ -68,41 +61,14 @@ function CloverPhoto({ size = 560, activeIdx = -1, onHover, onClick, rotation = 
             'drop-shadow(0 8px 18px rgba(78,154,68,0.18))',
             transition: 'filter 450ms'
           }} />
-        
-        {hotspots.map((h, i) => {
-          const active = activeIdx === i;
-          const leaf = LEAVES[i];
-          return (
-            <button
-              key={leaf.key}
-              onMouseEnter={() => onHover && onHover(i)}
-              onMouseLeave={() => onHover && onHover(-1)}
-              onClick={() => onClick && onClick(leaf.key)}
-              aria-label={leaf.label}
-              style={{
-                position: 'absolute',
-                left: h.left,
-                top: h.top,
-                transform: 'translate(-50%, -50%)',
-                width: size * 0.20,
-                height: size * 0.20,
-                borderRadius: '50%',
-                background: active ? 'rgba(255,255,255,0.10)' : 'transparent',
-                border: active ? '1.5px dashed rgba(78,154,68,0.55)' : '1.5px dashed transparent',
-                cursor: 'pointer',
-                padding: 0,
-                transition: 'all 250ms'
-              }} />);
-
-
-        })}
       </div>
     </div>);
 
 }
 
-function CloverSvg({ size = 560, activeIdx = -1, onHover, onClick, rotation = 0, accent = '#6FB860' }) {
-  const cx = size / 2,cy = size / 2;
+function CloverSvg({ size = 560, activeIdx = -1, rotation = 0 }) {
+  const cx = size / 2;
+  const cy = size / 2;
   const r = size * 0.28;
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}
@@ -120,20 +86,16 @@ function CloverSvg({ size = 560, activeIdx = -1, onHover, onClick, rotation = 0,
         const active = activeIdx === i;
         const dim = activeIdx >= 0 && !active;
         // heart-leaf shape pointing up, rotated to angle+45
-        const ang = (l.angle + 45) * Math.PI / 180;
-        const tx = cx,ty = cy;
+        const tx = cx;
+        const ty = cy;
         return (
           <g key={l.key}
           transform={`translate(${tx},${ty}) rotate(${l.angle + 45})`}
           style={{
-            cursor: 'pointer',
             transition: 'all 450ms cubic-bezier(.22,.8,.2,1)',
             opacity: dim ? 0.45 : 1,
             filter: active ? 'drop-shadow(0 14px 22px rgba(78,154,68,0.4))' : 'drop-shadow(0 4px 10px rgba(78,154,68,0.15))'
-          }}
-          onMouseEnter={() => onHover && onHover(i)}
-          onMouseLeave={() => onHover && onHover(-1)}
-          onClick={() => onClick && onClick(l.key)}>
+          }}>
             
             <g transform={active ? 'translate(0,-10) scale(1.05)' : ''}
             style={{ transition: 'transform 450ms cubic-bezier(.22,.8,.2,1)', transformOrigin: '0 0' }}>
@@ -165,8 +127,9 @@ function CloverSvg({ size = 560, activeIdx = -1, onHover, onClick, rotation = 0,
 
 }
 
-function CloverLine({ size = 560, activeIdx = -1, onHover, onClick, rotation = 0 }) {
-  const cx = size / 2,cy = size / 2;
+function CloverLine({ size = 560, activeIdx = -1, rotation = 0 }) {
+  const cx = size / 2;
+  const cy = size / 2;
   const r = size * 0.28;
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}
@@ -178,13 +141,9 @@ function CloverLine({ size = 560, activeIdx = -1, onHover, onClick, rotation = 0
           <g key={l.key}
           transform={`translate(${cx},${cy}) rotate(${l.angle + 45})`}
           style={{
-            cursor: 'pointer',
             transition: 'all 450ms cubic-bezier(.22,.8,.2,1)',
             opacity: dim ? 0.3 : 1
-          }}
-          onMouseEnter={() => onHover && onHover(i)}
-          onMouseLeave={() => onHover && onHover(-1)}
-          onClick={() => onClick && onClick(l.key)}>
+          }}>
             
             <g transform={active ? 'translate(0,-8)' : ''}
             style={{ transition: 'transform 450ms cubic-bezier(.22,.8,.2,1)' }}>
@@ -214,11 +173,6 @@ function Clover(props) {
   return <CloverPhoto {...props} />;
 }
 
-const TAKEOUT_LOOP = [
-  'Website Takeout?',
-  'Application Takeout?',
-  'Design Takeout?'
-];
 
 const SERVICE_TAGS = [
   '#UXUI',
@@ -232,10 +186,10 @@ const SERVICE_TAGS = [
 function LoopTicker({ items, className = '' }) {
   const list = [...items, ...items];
   return (
-    <div className={`loop-ticker ${className}`}>
-      <div className="loop-track">
+    <div className={`loop_ticker ${className}`}>
+      <div className="loop_track">
         {list.map((item, i) =>
-        <span key={`${item}-${i}`} className="loop-item mono">{item}</span>
+        <span key={`${item}-${i}`} className="loop_item mono">{item}</span>
         )}
       </div>
     </div>);
@@ -245,8 +199,8 @@ function LoopTicker({ items, className = '' }) {
    SECTIONS
    ======================================================= */
 const TOOLS = [
-  'Figma', 'FigJam', 'Notion', 'Zeplin',
-  'Miro', 'Jira', 'Framer', 'HTML / CSS', 'After Effects'
+  'Figma', 'FigJam', 'HTML', 'CSS',
+  'JS', 'chatGPT', 'CLAUDE', 'Photoshop', 'After Effects'
 ];
 
 function HopeSection() {
@@ -283,17 +237,17 @@ function HopeSection() {
       </div>
 
       {/* 크레덴셜 툴 스트립 — ethicallifeworld.com "Pharmacist Formulated" 섹션 참조 */}
-      <div className="credential-strip">
-        <div className="credential-header">
-          <span className="credential-badge">
-            <span className="credential-badge-dot" />
+      <div className="credential_strip">
+        <div className="credential_header">
+          <span className="credential_badge">
+            <span className="credential_badge_dot" />
             VERIFIED SKILLS
           </span>
-          <span className="credential-label">TOOLS &amp; METHODS</span>
+          <span className="credential_label">TOOLS &amp; METHODS</span>
         </div>
-        <div className="credential-pills">
+        <div className="credential_pills">
           {TOOLS.map((t) => (
-            <span key={t} className="credential-pill">{t}</span>
+            <span key={t} className="credential_pill">{t}</span>
           ))}
         </div>
       </div>
@@ -321,37 +275,37 @@ function TrustSection() {
   const hasSiteLink = Boolean(p.siteUrl && p.siteUrl !== '#');
   return (
     <SectionShell eyebrow="02 · Trust" title="문제를 구조화해 신뢰 가능한 경험을 만듭니다">
-      <LoopTicker items={SERVICE_TAGS} className="trust-ticker" />
-      <div className="trust-layout">
-        <div className="trust-rail">
+      <LoopTicker items={SERVICE_TAGS} className="trust_ticker" />
+      <div className="trust_layout">
+        <div className="trust_rail">
           {PROJECTS.map((pr, i) =>
           <button
             key={i}
-            className={`trust-card ${active === i ? 'active' : ''}`}
+            className={`trust_card ${active === i ? 'active' : ''}`}
             onMouseEnter={() => setActive(i)}
             onFocus={() => setActive(i)}
             onClick={() => setActive(i)}>
-              <span className="mono trust-card-index">{String(i + 1).padStart(2, '0')}</span>
-              <span className="trust-card-title">{pr.title}</span>
-              <span className="trust-card-tag">{pr.tag}</span>
+              <span className="mono trust_card_index">{String(i + 1).padStart(2, '0')}</span>
+              <span className="trust_card_title">{pr.title}</span>
+              <span className="trust_card_tag">{pr.tag}</span>
             </button>
           )}
         </div>
 
-        <div className="trust-detail">
-          <div key={active} className="trust-detail-content" style={{ animation: 'fadeSlide 320ms cubic-bezier(.22,.8,.2,1)' }}>
-            <div className="trust-visual">
-              <div className="mono trust-visual-label">{p.tag}</div>
+        <div className="trust_detail">
+          <div key={active} className="trust_detail_content" style={{ animation: 'fadeSlide 320ms cubic-bezier(.22,.8,.2,1)' }}>
+            <div className="trust_visual">
+              <div className="mono trust_visual_label">{p.tag}</div>
             </div>
 
-            <div className="mono trust-detail-tag">{p.tag}</div>
-            <h3 className="serif trust-detail-title">{p.title}</h3>
-            <div className="trust-link-row">
+            <div className="mono trust_detail_tag">{p.tag}</div>
+            <h3 className="serif trust_detail_title">{p.title}</h3>
+            <div className="trust_link_row">
               <a
                 href={p.siteUrl || '#'}
                 target={hasSiteLink ? '_blank' : undefined}
                 rel={hasSiteLink ? 'noreferrer noopener' : undefined}
-                className={`trust-link-btn ${hasSiteLink ? '' : 'is-disabled'}`}
+                className={`trust_link_btn ${hasSiteLink ? '' : 'is_disabled'}`}
                 onClick={(e) => {if (!hasSiteLink) e.preventDefault();}}>
                 사이트 바로가기
               </a>
@@ -446,15 +400,15 @@ function HappinessSection() {
   return (
     <SectionShell eyebrow="03 · Happiness" title="일상에서 발견한 감각의 기록">
       <div style={{ width: '100%', height: '100%', minHeight: 0, display: 'flex' }}>
-        <div className="happiness-stage-wrap">
-          <div className="happiness-glow" />
-          <div className="happiness-bg-copy serif">
+        <div className="happiness_stage_wrap">
+          <div className="happiness_glow" />
+          <div className="happiness_bg_copy serif">
             <span>REAL PEOPLE</span>
             <span>REAL RESULTS</span>
           </div>
 
           <div
-            className="happiness-card-layer"
+            className="happiness_card_layer"
             style={{ cursor: phase === 'active' ? (dragging ? 'grabbing' : 'grab') : 'default' }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
@@ -467,17 +421,17 @@ function HappinessSection() {
               return (
                 <article
                   key={i}
-                  className={`happiness-card ${role} ${h.tone === 'lime' ? 'tone-lime' : 'tone-light'} ${isEntered ? 'is-entered' : ''} ${isEntryMotion ? 'is-entry-motion' : ''}`}
+                  className={`happiness_card ${role} ${h.tone === 'lime' ? 'tone_lime' : 'tone_light'} ${isEntered ? 'is_entered' : ''} ${isEntryMotion ? 'is_entry_motion' : ''}`}
                   style={{ '--enter-rot': `${-18 + i * 18}deg`, '--enter-delay': `${i * 90}ms` }}>
-                  <div className={`happiness-card-media ${h.imageUrl ? 'has-image' : 'is-empty'}`}>
+                  <div className={`happiness_card_media ${h.imageUrl ? 'has_image' : 'is_empty'}`}>
                     {h.imageUrl ?
                     <img src={h.imageUrl} alt={h.imageAlt || h.title} loading="lazy" /> :
                     null}
                   </div>
-                  <h3 className="happiness-card-title">{h.title}</h3>
-                  <p className="happiness-card-desc">"{h.note}"</p>
-                  <div className="happiness-card-footer">
-                    <span className="happiness-card-avatar">{getInitial(h.title)}</span>
+                  <h3 className="happiness_card_title">{h.title}</h3>
+                  <p className="happiness_card_desc">"{h.note}"</p>
+                  <div className="happiness_card_footer">
+                    <span className="happiness_card_avatar">{getInitial(h.title)}</span>
                     <span>{h.location || 'Seoul, KR'}</span>
                   </div>
                 </article>
@@ -485,13 +439,13 @@ function HappinessSection() {
             })}
           </div>
 
-          <div className="happiness-stage-ui">
-            <div className="happiness-proof-indicator" aria-hidden="true">
+          <div className="happiness_stage_ui">
+            <div className="happiness_proof_indicator" aria-hidden="true">
               {HOBBIES.map((_, i) => (
-                <span key={i} className={`happiness-proof-dot ${i === activeCard ? 'active' : ''}`} />
+                <span key={i} className={`happiness_proof_dot ${i === activeCard ? 'active' : ''}`} />
               ))}
             </div>
-            <div className="mono happiness-proof-guide">드래그로 탐색</div>
+            <div className="mono happiness_proof_guide">드래그로 탐색</div>
           </div>
         </div>
       </div>
@@ -556,14 +510,14 @@ function ContactRow({ k, v, href }) {
 
 function SectionShell({ eyebrow, title, children, onBodyWheelCapture }) {
   return (
-    <div className="section-shell" style={{ maxWidth: 960, width: '100%', margin: '0 auto', padding: 'clamp(20px, 3.5vh, 48px) 8px clamp(12px, 2.3vh, 24px)', height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+    <div className="section_shell" style={{ maxWidth: 960, width: '100%', margin: '0 auto', padding: 'clamp(20px, 3.5vh, 48px) 8px clamp(12px, 2.3vh, 24px)', height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
       <div className="mono" style={{ fontSize: 11, letterSpacing: '0.18em', color: 'var(--clover-deep)', marginBottom: 14 }}>
         {eyebrow.toUpperCase()}
       </div>
       <h2 className="serif" style={{ fontSize: 'clamp(30px, 4vw, 44px)', lineHeight: 1.2, color: 'var(--ink)', maxWidth: 720, marginBottom: 'clamp(10px, 2vh, 18px)' }}>
         {title}
       </h2>
-      <div className="section-shell-body" onWheelCapture={onBodyWheelCapture} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+      <div className="section_shell_body" onWheelCapture={onBodyWheelCapture} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         {children}
       </div>
     </div>);
@@ -622,7 +576,7 @@ function SnapSection({ id, leaf, onInView, children, tint }) {
     <section
       id={id}
       ref={(n) => { rootRef.current = n; ref.current = n; }}
-      className="snap-section"
+      className="snap_section"
       data-screen-label={leaf ? `${leaf.label} · ${leaf.ko}` : 'Home'}
       style={{
         background: tint || 'var(--cream)',
@@ -760,7 +714,6 @@ function MiniLeaf({ hue = '#6FB860', size = 22 }) {
 function Hero({ onOpen, cloverMode }) {
   const [hover, setHover] = useState(-1);
   const [vw, setVw] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const onR = () => setVw(window.innerWidth);
@@ -768,56 +721,30 @@ function Hero({ onOpen, cloverMode }) {
     return () => window.removeEventListener('resize', onR);
   }, []);
 
-  const cloverSize = Math.min(560, vw > 1100 ? vw * 0.42 : vw * 0.72, 560);
-
-  const rotRef = useRef(0);
-  const prevHoverRef = useRef(-1);
-  if (hover >= 0) {
-    if (prevHoverRef.current !== hover) {
-      const target = -90 * hover;
-      const current = rotRef.current;
-      let next = target;
-      while (next > current) next -= 360;
-      while (current - next >= 360) next += 360;
-      rotRef.current = next;
-      prevHoverRef.current = hover;
-    }
-  } else {
-    rotRef.current = Math.round(rotRef.current / 360) * 360;
-    prevHoverRef.current = -1;
-  }
-  const rotationTarget = rotRef.current;
-
-  const onTiltMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: x * 22, y: y * 14 });
-  };
+  const cloverSize = Math.min(560, vw > 1100 ? vw * 1 : vw * 1);
 
   return (
-    <div className="hero-wrap">
-      <div className="hero-grid">
+    <div className="hero_wrap">
+      <div className="hero_grid">
         <div>
-          <div className="hero-available reveal">
-            <span className="hero-available-dot" />
+          <div className="hero_available reveal">
+            <span className="hero_available_dot" />
             <span className="mono">AVAILABLE FOR WORK</span>
           </div>
-          <div className="mono reveal hero-kicker">
+          <div className="mono reveal hero_kicker">
             PORTFOLIO - UX/UI DESIGNER - 2026
           </div>
-          <h1 className="serif reveal d1 hero-title">
-            Designed for clarity,<br />
-            built for momentum
+          <h1 className="serif reveal d1 hero_title">
+            경험을 수집하고, 구조화하여, 의사결정으로 연결하는 디자이너 김슬기입니다.
           </h1>
-          <p className="reveal d2 hero-desc">
+          {/* <p className="reveal d2 hero_desc">
             Hoping for clarity, building trust with structure, and delivering joyful flow.
             Four-leaf storytelling meets practical interaction design.
-          </p>
+          </p> */}
 
-          <div className="hero-chip-row reveal d2">
+          <div className="hero_chip_row reveal d2">
             {SERVICE_TAGS.map((tag) =>
-            <span key={tag} className="hero-chip">{tag}</span>
+            <span key={tag} className="hero_chip">{tag}</span>
             )}
           </div>
 
@@ -825,18 +752,18 @@ function Hero({ onOpen, cloverMode }) {
             {LEAVES.map((l, i) =>
             <button
               key={l.key}
-              className="leaf-row"
+              className="leaf_row"
               onMouseEnter={() => setHover(i)}
               onMouseLeave={() => setHover(-1)}
               onClick={() => onOpen(l.key)}>
                 <span className="mono" style={{ fontSize: 10, color: 'var(--ink-mute)' }}>
                   0{i + 1}
                 </span>
-                <span className="leaf-row-label">
+                <span className="leaf_row_label">
                   <span className="serif" style={{ fontSize: 20 }}>{l.label}</span>
                   <span style={{ fontSize: 13, color: 'var(--ink-soft)' }}>{l.sub}</span>
                 </span>
-                <span className="leaf-row-arrow">-&gt;</span>
+                <span className="leaf_row_arrow">-&gt;</span>
               </button>
             )}
             <div style={{ borderTop: '1px solid var(--line)' }} />
@@ -844,13 +771,10 @@ function Hero({ onOpen, cloverMode }) {
         </div>
 
         <div
-          className="reveal d2 hero-clover-zone"
-          onMouseMove={onTiltMove}
-          onMouseLeave={() => setTilt({ x: 0, y: 0 })}>
+          className="reveal d2 hero_clover_zone">
           <div
-            className="hero-clover-float"
-            style={{ transform: `translate(${tilt.x}px, ${tilt.y}px)` }}>
-            <div className="hero-clover-glow" />
+            className="hero_clover_float">
+            <div className="hero_clover_glow" />
             <svg width={cloverSize * 1.15} height={cloverSize * 1.15} viewBox="0 0 640 640" style={{ position: 'absolute' }}>
               <circle cx="320" cy="320" r="280" fill="none" stroke="var(--line)" strokeDasharray="2 6" opacity="0.5" />
               <circle cx="320" cy="320" r="220" fill="none" stroke="var(--line)" strokeDasharray="2 6" opacity="0.35" />
@@ -860,12 +784,11 @@ function Hero({ onOpen, cloverMode }) {
               mode={cloverMode}
               size={cloverSize}
               activeIdx={hover}
-              rotation={rotationTarget}
+              rotation={0}
               smooth={true}
-              onHover={setHover}
-              onClick={onOpen} />
+              />
 
-            <div className="hero-active-pill">
+            <div className="hero_active_pill">
               {hover >= 0 ?
               <span>
                   <b className="serif" style={{ fontSize: 14 }}>{LEAVES[hover].label}</b>
@@ -879,13 +802,6 @@ function Hero({ onOpen, cloverMode }) {
             </div>
           </div>
         </div>
-      </div>
-
-      <LoopTicker items={TAKEOUT_LOOP} className="hero-ticker reveal d4" />
-      <div className="hero-scroll reveal d4">
-        <span className="mono">SCROLL</span>
-        <span className="hero-scroll-line" />
-        <span style={{ animation: 'bounceDown 2s infinite' }}>v</span>
       </div>
     </div>);
 
@@ -959,11 +875,11 @@ function SideNav({ active, onJump }) {
     { id: 'luck', num: '04', label: 'LUCK' }
   ];
   return (
-    <nav className="side-nav">
+    <nav className="side_nav">
       {items.map((it) => (
         <a key={it.id} href={`#${it.id}`}
           onClick={(e) => { e.preventDefault(); onJump(it.id); }}
-          className={`side-nav-dot ${active === it.id ? 'active' : ''}`}
+          className={`side_nav_dot ${active === it.id ? 'active' : ''}`}
           style={{ textDecoration: 'none' }}>
           <span className="bar" />
           <span className="lbl">{it.num} · {it.label}</span>
@@ -997,5 +913,3 @@ function TopBar({ active }) {
 /* =======================================================
    APP - scroll narrative
    ======================================================= */
-
-

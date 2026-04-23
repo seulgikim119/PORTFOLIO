@@ -7,19 +7,32 @@ function App() {
     try {
       const saved = localStorage.getItem('tweaks-np');
       return saved ? { ...TWEAK_DEFAULTS, ...JSON.parse(saved) } : TWEAK_DEFAULTS;
-    } catch {return TWEAK_DEFAULTS;}
-  });
-  const [tweakOpen, setTweakOpen] = React.useState(false);
-  const [section, setSection] = React.useState(() => {
-    const h = window.location.hash.replace('#', '');
-    return ['hope', 'trust', 'happiness', 'luck'].includes(h) ? h : null;
+    } catch {
+      return TWEAK_DEFAULTS;
+    }
   });
 
+  const [tweakOpen, setTweakOpen] = React.useState(false);
+  const [section, setSection] = React.useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    return ['hope', 'trust', 'happiness', 'luck'].includes(hash) ? hash : null;
+  });
+  const [active, setActive] = React.useState('home');
+
   // persistence
-  React.useEffect(() => {localStorage.setItem('tweaks-np', JSON.stringify(tweaks));}, [tweaks]);
   React.useEffect(() => {
-    if (section) window.location.hash = section;else
-    if (window.location.hash) window.history.replaceState(null, '', ' ');
+    localStorage.setItem('tweaks-np', JSON.stringify(tweaks));
+  }, [tweaks]);
+
+  React.useEffect(() => {
+    if (section) {
+      window.location.hash = section;
+      return;
+    }
+
+    if (window.location.hash) {
+      window.history.replaceState(null, '', ' ');
+    }
   }, [section]);
 
   window.__goTo = setSection;
@@ -41,10 +54,11 @@ function App() {
     window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [k]: v } }, '*');
   };
 
-  const [active, setActive] = React.useState('home');
   const jump = (id) => {
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
@@ -70,8 +84,8 @@ function App() {
         </SnapSection>
       </main>
       <TweakPanel open={tweakOpen} tweaks={tweaks} setTweak={setTweak} />
-    </>);
-
+    </>
+  );
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);

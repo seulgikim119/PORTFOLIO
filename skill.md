@@ -10,6 +10,8 @@
   - localStorage key 설계
   - 다음 작업
 - 코드 수정 전에도, 분석/기획 단계 결과를 먼저 이 문서에 반영한다.
+- 사용자가 수정 요청을 하면 실제 코드 작업 전에 `작업 계획`을 먼저 기록하고, 작업 완료 직후 `실제 작업 내용`을 반드시 기록한다.
+- 계획만 기록하고 끝내지 않으며, 최종 반영 파일과 변경 요지를 작업 로그에 남긴다.
 
 ## 이번 작업 목표
 - 01 · Hope 섹션 타이틀을 줄바꿈 없이 1줄로 유지되도록 CSS 오버라이드 적용
@@ -98,6 +100,36 @@
 ---
 
 ## 작업 로그
+### 2026-04-23 (4차) — 전체 파일 코드 정리
+- 작업 전 계획: 기능 동작과 사용자 문구는 유지하고, `app.jsx`, `assets/js/data.js`, `assets/js/components.jsx`를 중심으로 들여쓰기, 배열/객체 포맷, 중복/미사용 코드 같은 가독성 이슈를 정리한다.
+- 작업 전 계획: 대규모 구조 변경이나 신규 기능 추가 없이, 현재 동작을 유지하는 범위에서 읽기 쉬운 형태로 코드 스타일을 맞춘다.
+- 실제 작업 내용: `app.jsx`의 상태 초기화, `useEffect`, 해시 처리, 스크롤 이동 로직을 읽기 쉬운 블록 형태로 재정렬해 조건문과 반환 구조를 정리했다.
+- 실제 작업 내용: `assets/js/data.js`의 `LEAVES`, `PROJECTS`, `HOBBIES` 배열과 객체 들여쓰기를 정리해 데이터 블록 가독성을 높였다.
+- 실제 작업 내용: `assets/js/components.jsx`에서 미사용 `useMemo` import와 사용되지 않는 함수 인자/중간 변수를 제거해 경고 가능성과 잡음을 줄였다.
+- 반영 파일: `app.jsx`, `assets/js/data.js`, `assets/js/components.jsx`
+
+### 2026-04-23 (3차) — 클래스명 스네이크 표기법 통일
+- 작업 전 계획: 사용자에게 보이는 문구와 데이터 텍스트는 유지하고, `assets/js/components.jsx`와 `assets/styles.css`에서 연결된 클래스명과 상태 클래스만 스네이크 표기법으로 일괄 정리한다.
+- 작업 전 계획: JSX `className` 값, 동적 클래스 문자열, CSS 선택자를 동일 규칙으로 함께 수정해 스타일 매칭이 끊기지 않도록 맞춘다.
+- 실제 작업 내용: `assets/js/components.jsx`의 `className` 값과 동적 상태 클래스에서 하이픈 표기를 언더스코어 표기로 변경했다. 예: `hero_wrap`, `trust_card`, `happiness_card`, `page_loader`.
+- 실제 작업 내용: `assets/styles.css`의 대응 선택자도 동일 규칙으로 변경해 JSX와 CSS 매칭을 유지했다. 상태 클래스는 `is_entered`, `is_entry_motion`, `is_disabled`, `has_image`처럼 함께 정리했다.
+- 실제 작업 내용: 사용자에게 보이는 본문 문구와 데이터 텍스트는 유지하고, 클래스 식별자에 해당하는 문자열만 수정했다.
+- 반영 파일: `assets/js/components.jsx`, `assets/styles.css`
+
+### 2026-04-23 (2차) — Hero 클로버 이미지 인터랙션 제거
+- 작업 전 계획: 첫 번째 섹션 Hero의 클로버 이미지에 연결된 인터랙션 범위를 확인하고, 이미지 자체에 붙은 호버·클릭·틸트 반응만 제거한다.
+- 작업 전 계획: 좌측 리프 버튼 기반 섹션 이동 구조는 유지하고, 클로버 렌더링 컴포넌트는 정적 표시 상태로 정리한다.
+- 실제 작업 내용: `assets/js/components.jsx`의 `Hero`에서 `hero-clover-zone`의 `onMouseMove`, `onMouseLeave`와 `tilt` 상태를 제거해 마우스 추적 인터랙션을 없앴다.
+- 실제 작업 내용: `Clover` 호출부에서 `onHover`, `onClick` 전달을 제거해 Hero 클로버 이미지가 직접 반응하지 않도록 정리했다.
+- 실제 작업 내용: `CloverPhoto`의 leaf hotspot 버튼들을 삭제했고, `CloverSvg`/`CloverLine`의 hover·click 이벤트와 pointer cursor도 제거해 모든 클로버 모드를 정적 표시로 맞췄다.
+- 반영 파일: `assets/js/components.jsx`
+
+### 2026-04-23 (1차) — Hero 클로버 회전 제거
+- 작업 전 계획: 첫 번째 섹션 Hero 클로버의 회전 적용 지점을 확인하고, 호버 상태는 유지한 채 회전만 제거한다.
+- 실제 작업 내용: `assets/js/components.jsx`의 `Hero`에서 `rotRef`, `prevHoverRef`, `rotationTarget` 관련 회전 계산 로직을 제거했다.
+- 실제 작업 내용: `Clover` 호출부의 `rotation` 값을 `0`으로 고정해 클로버가 더 이상 회전하지 않도록 수정했다.
+- 반영 파일: `assets/js/components.jsx`
+
 ### 2026-04-21 (4차) — 01 · Hope 타이틀 1줄 고정
 - 요청: `<SectionShell ... title="경험을 수집하고, 구조화하여, 의사결정으로 연결하는 디자이너">` 문구를 줄바꿈 없이 표시
 - 반영: `assets/styles.css`에 `#hope .section-shell > h2.serif { white-space: nowrap; max-width: none !important; }` 추가
