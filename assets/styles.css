@@ -331,10 +331,12 @@ body::before {
 
 .hero_title {
   font-size: clamp(24px, 3vw, 32px);
-  line-height: 1.1;
+  line-height: 150%;
   color: var(--ink);
   margin-bottom: 22px;
   letter-spacing: -.02em;
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 .hero_desc {

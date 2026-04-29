@@ -721,7 +721,7 @@ function Hero({ onOpen, cloverMode }) {
     return () => window.removeEventListener('resize', onR);
   }, []);
 
-  const cloverSize = Math.min(560, vw > 1100 ? vw * 1 : vw * 1);
+  const cloverSize = Math.min(720, vw > 1100 ? vw * 1 : vw * 1);
 
   return (
     <div className="hero_wrap">
@@ -735,7 +735,7 @@ function Hero({ onOpen, cloverMode }) {
             PORTFOLIO - UX/UI DESIGNER - 2026
           </div>
           <h1 className="serif reveal d1 hero_title">
-            경험을 수집하고, 구조화하여, 의사결정으로 연결하는 디자이너 김슬기입니다.
+          경험을 수집하고, 구조화하여, 의사결정으로 연결하는 디자이너 김슬기입니다.
           </h1>
           {/* <p className="reveal d2 hero_desc">
             Hoping for clarity, building trust with structure, and delivering joyful flow.
