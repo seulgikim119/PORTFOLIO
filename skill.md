@@ -59,7 +59,7 @@
 
 ## 파일 구조
 - `assets/js/data.js`: 포트폴리오 데이터와 tweak 기본값
-- `assets/js/common/base.jsx`: `PageLoader`, `Clover`, `LoopTicker` 등 공통 컴포넌트
+- `assets/js/common/base.jsx`: `Clover`, `LoopTicker` 등 공통 컴포넌트
 - `assets/js/sections/hero.jsx`: 첫 화면 Hero
 - `assets/js/sections/hope.jsx`: 01 · Hope 자기소개 섹션
 - `assets/js/sections/projects.jsx`: 02 · Trust 프로젝트 섹션
@@ -305,3 +305,36 @@
 | `assets/styles.css` | `.page-loader` / `.hero-available` / `.credential-strip` 스타일 블록 추가 |
 | `assets/js/components.jsx` | `PageLoader` 컴포넌트 추가, `Hero`에 배지 삽입, `HopeSection`에 크레덴셜 스트립 삽입 |
 | `app.jsx` | `loaded` state 추가, `PageLoader` 조건부 렌더 |
+
+### 2026-05-11 — 프로젝트 이미지 크기 축소
+- 요청: 프로젝트 카드 안의 이미지가 너무 커 보여 절반 크기로 줄이기.
+- 작업 전 확인: 프로젝트 이미지는 `assets/js/sections/projects.jsx`에서 `project_card_media`로 렌더링되고, 실제 크기는 `assets/styles.css`의 `.project_card_media`가 제어함.
+- 실제 작업 내용: `.project_card_media`의 폭을 `min(400px, 50%)`에서 `min(200px, 25%)`로 줄여 표시 크기를 절반 수준으로 조정했다.
+- 실제 작업 내용: 이미지가 작아진 비율에 맞춰 상단 여백을 `clamp(20px, 3vh, 34px)`에서 `clamp(16px, 2vh, 24px)`로 줄였다.
+- 반영 파일: `assets/styles.css`, `skill.md`
+
+### 2026-05-11 — 프로젝트 이미지 크기 1.5배 확대
+- 요청: 절반으로 줄인 프로젝트 이미지를 다시 1.5배 키우기.
+- 실제 작업 내용: `.project_card_media`의 폭을 `min(200px, 25%)`에서 `min(300px, 37.5%)`로 변경했다.
+- 반영 파일: `assets/styles.css`, `skill.md`
+
+### 2026-05-11 — 프로젝트 섹션 스크롤 브레이크 안정화
+- 요청: 프로젝트 섹션에서 스크롤 브레이크가 제대로 걸리지 않는 원인 확인 후 수정.
+- 작업 전 확인: 기존 잠금 조건 `rect.top <= window.innerHeight * 0.2 && rect.bottom >= window.innerHeight * 0.9`는 100vh 섹션 기준으로 동작 구간이 좁아 빠른 휠 스크롤에서 통과될 수 있었다.
+- 실제 작업 내용: 프로젝트 섹션 잠금 조건을 `rect.top <= window.innerHeight * 0.08 && rect.bottom >= window.innerHeight * 0.25`로 조정해 섹션 top이 화면 상단에 가까워졌을 때부터 더 안정적으로 wheel 이벤트를 잡도록 했다.
+- 실제 작업 내용: `.scroller`의 `scroll-snap-type`을 `y proximity`에서 `y mandatory`로 변경해 섹션 도착 위치가 더 일관되게 맞춰지도록 했다.
+- 반영 파일: `assets/js/sections/projects.jsx`, `assets/styles.css`, `skill.md`
+
+### 2026-05-11 — 인트로 로딩 장면 삭제
+- 요청: 사이트 진입 시 표시되는 인트로 장면 삭제.
+- 작업 전 확인: 인트로는 `app.jsx`의 `loaded` 상태와 `<PageLoader />` 조건부 렌더링으로 표시되고, 컴포넌트는 `assets/js/common/base.jsx`, 스타일은 `assets/styles.css`의 `.page_loader` 계열 선택자에서 관리되고 있었다.
+- 실제 작업 내용: `app.jsx`에서 `loaded` 상태와 `<PageLoader />` 렌더링을 제거해 첫 진입 시 바로 본문이 보이도록 했다.
+- 실제 작업 내용: 사용하지 않는 `PageLoader` 컴포넌트와 `.page_loader` 관련 CSS, `loaderChIn`, `loaderFill` 키프레임을 삭제했다.
+- 반영 파일: `app.jsx`, `assets/js/common/base.jsx`, `assets/styles.css`, `skill.md`
+
+### 2026-05-11 — 프로젝트 wheel effect 의존성 경고 정리
+- 요청: `assets/js/sections/projects.jsx` 67번째 줄의 빨간줄 원인 수정.
+- 작업 전 확인: `useEffect` 내부에서 외부 함수 `onProjectWheel`을 참조하면서 dependency 배열에는 `active`만 들어 있어 React Hook 의존성 경고가 발생할 수 있었다.
+- 실제 작업 내용: `onProjectWheel`과 잠금 판정 함수 `isProjectSectionLocked`를 `useEffect` 내부로 옮겨 effect 의존성을 `active`로 명확하게 정리했다.
+- 실제 작업 내용: 기존 `clampProject` 헬퍼 사용을 effect 내부의 `Math.max/Math.min` 계산으로 대체해 외부 함수 의존성을 없앴다.
+- 반영 파일: `assets/js/sections/projects.jsx`, `skill.md`

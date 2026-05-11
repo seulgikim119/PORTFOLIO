@@ -32,7 +32,7 @@ body {
 }
 
 .scroller {
-  scroll-snap-type: y proximity;
+  scroll-snap-type: y mandatory;
 }
 
 .snap_section {
@@ -882,9 +882,9 @@ body::before {
 }
 
 .project_card_media {
-  width: min(560px, 88%);
-  aspect-ratio: 1116 / 676;
-  margin: clamp(20px, 3vh, 34px) auto 0;
+  width: min(300px, 37.5%);
+  aspect-ratio: 4 / 3;
+  margin: clamp(16px, 2vh, 24px) auto 0;
   overflow: visible;
 }
 
@@ -1451,79 +1451,6 @@ body::before {
   .happiness_card.next {
     left: 82%;
   }
-}
-
-/* =======================================================
-   PAGE LOADER  (ethicallifeworld.com 필름스트립 진입 시퀀스 참조)
-   ======================================================= */
-.page_loader {
-  position: fixed;
-  inset: 0;
-  background: var(--ink);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 600ms ease, visibility 600ms ease;
-}
-
-.page_loader__exit {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.page_loader_inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 28px;
-}
-
-.page_loader_letters {
-  display: flex;
-  gap: 3px;
-}
-
-.page_loader_ch {
-  font-size: clamp(52px, 9vw, 88px);
-  color: var(--cream);
-  letter-spacing: -.02em;
-  opacity: 0;
-  transform: translateY(28px);
-  animation: loaderChIn 550ms cubic-bezier(.22, .8, .2, 1) forwards;
-}
-
-@keyframes loaderChIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.page_loader_track {
-  width: 200px;
-  height: 1px;
-  background: rgba(255, 255, 255, .1);
-  overflow: hidden;
-}
-
-.page_loader_fill {
-  height: 100%;
-  background: var(--clover);
-  animation: loaderFill 1.7s cubic-bezier(.4, 0, .2, 1) forwards;
-}
-
-@keyframes loaderFill {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-.page_loader_label {
-  font-size: 10px;
-  letter-spacing: .22em;
-  color: var(--ink-mute);
-  animation: fadeIn 700ms 400ms ease both;
 }
 
 /* =======================================================

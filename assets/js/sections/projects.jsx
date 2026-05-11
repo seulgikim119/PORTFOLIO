@@ -7,17 +7,6 @@ function TrustSection() {
   const directionGuardUntil = useRef(0);
   const p = PROJECTS[active];
 
-  const clampProject = (idx) => Math.max(0, Math.min(PROJECTS.length - 1, idx));
-
-  const isProjectSectionLocked = () => {
-    const stage = stageRef.current;
-    if (!stage) return false;
-
-    const section = stage.closest('.snap_section') || stage;
-    const rect = section.getBoundingClientRect();
-    return rect.top <= window.innerHeight * 0.25 && rect.bottom >= window.innerHeight * 0.75;
-  };
-
   const getCardRole = (idx) => {
     if (idx === active) return 'active';
     if (idx < active) return 'prev';
@@ -25,45 +14,54 @@ function TrustSection() {
     return 'hidden';
   };
 
-  const onProjectWheel = (e) => {
-    if (!isProjectSectionLocked()) return;
-
-    const direction = Math.sign(e.deltaY);
-    const atStart = active === 0;
-    const atEnd = active === PROJECTS.length - 1;
-
-    if ((direction < 0 && atStart) || (direction > 0 && atEnd)) {
-      wheelDeltaY.current = 0;
-      return;
-    }
-
-    if (e.cancelable !== false) e.preventDefault();
-    if (e.stopPropagation) e.stopPropagation();
-
-    const now = Date.now();
-    if (now < wheelLockUntil.current || direction === 0) return;
-
-    if (
-      lastMoveDirection.current !== 0 &&
-      direction !== lastMoveDirection.current &&
-      now < directionGuardUntil.current
-    ) {
-      wheelDeltaY.current = 0;
-      return;
-    }
-
-    wheelDeltaY.current += e.deltaY;
-    if (Math.abs(wheelDeltaY.current) < 42) return;
-
-    const moveDirection = wheelDeltaY.current > 0 ? 1 : -1;
-    setActive((prev) => clampProject(prev + moveDirection));
-    lastMoveDirection.current = moveDirection;
-    directionGuardUntil.current = now + 980;
-    wheelDeltaY.current = 0;
-    wheelLockUntil.current = now + 620;
-  };
-
   useEffect(() => {
+    const isProjectSectionLocked = () => {
+      const stage = stageRef.current;
+      if (!stage) return false;
+
+      const section = stage.closest('.snap_section') || stage;
+      const rect = section.getBoundingClientRect();
+      return rect.top <= window.innerHeight * 0.08 && rect.bottom >= window.innerHeight * 0.25;
+    };
+
+    const onProjectWheel = (e) => {
+      if (!isProjectSectionLocked()) return;
+
+      const direction = Math.sign(e.deltaY);
+      const atStart = active === 0;
+      const atEnd = active === PROJECTS.length - 1;
+
+      if ((direction < 0 && atStart) || (direction > 0 && atEnd)) {
+        wheelDeltaY.current = 0;
+        return;
+      }
+
+      if (e.cancelable !== false) e.preventDefault();
+      if (e.stopPropagation) e.stopPropagation();
+
+      const now = Date.now();
+      if (now < wheelLockUntil.current || direction === 0) return;
+
+      if (
+        lastMoveDirection.current !== 0 &&
+        direction !== lastMoveDirection.current &&
+        now < directionGuardUntil.current
+      ) {
+        wheelDeltaY.current = 0;
+        return;
+      }
+
+      wheelDeltaY.current += e.deltaY;
+      if (Math.abs(wheelDeltaY.current) < 42) return;
+
+      const moveDirection = wheelDeltaY.current > 0 ? 1 : -1;
+      setActive((prev) => Math.max(0, Math.min(PROJECTS.length - 1, prev + moveDirection)));
+      lastMoveDirection.current = moveDirection;
+      directionGuardUntil.current = now + 980;
+      wheelDeltaY.current = 0;
+      wheelLockUntil.current = now + 620;
+    };
+
     window.addEventListener('wheel', onProjectWheel, { passive: false, capture: true });
     return () => window.removeEventListener('wheel', onProjectWheel, true);
   }, [active]);

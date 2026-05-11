@@ -1,39 +1,6 @@
 ﻿const { useState, useEffect, useRef } = React;
 
 /* =======================================================
-   PAGE LOADER
-   ethicallifeworld.com 필름스트립 로딩 시퀀스 참조
-   ======================================================= */
-function PageLoader({ onDone }) {
-  const [exit, setExit] = useState(false);
-  useEffect(() => {
-    const t1 = setTimeout(() => setExit(true), 1900);
-    const t2 = setTimeout(onDone, 2500);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [onDone]);
-  return (
-    <div className={`page_loader${exit ? ' page_loader__exit' : ''}`}>
-      <div className="page_loader_inner">
-        <div className="page_loader_letters">
-          {'SEULGI'.split('').map((ch, i) => (
-            <span
-              key={i}
-              className="page_loader_ch serif"
-              style={{ animationDelay: `${i * 85}ms` }}>
-              {ch}
-            </span>
-          ))}
-        </div>
-        <div className="page_loader_track">
-          <div className="page_loader_fill" />
-        </div>
-        <p className="mono page_loader_label">UX · UI DESIGNER · PORTFOLIO · 2026</p>
-      </div>
-    </div>
-  );
-}
-
-/* =======================================================
    COMPONENTS
    ======================================================= */
 function CloverPhoto({ size = 560, activeIdx = -1, rotation = 0, smooth = false }) {

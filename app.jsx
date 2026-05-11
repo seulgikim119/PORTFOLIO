@@ -2,7 +2,6 @@
    APP ENTRY
    ======================================================= */
 function App() {
-  const [loaded, setLoaded] = React.useState(false);
   const [tweaks, setTweaks] = React.useState(() => {
     try {
       const saved = localStorage.getItem('tweaks-np');
@@ -63,7 +62,6 @@ function App() {
 
   return (
     <>
-      {!loaded && <PageLoader onDone={() => setLoaded(true)} />}
       <TopBar active={active} onJump={jump} />
       <main className="scroller">
         <SnapSection id="home" onInView={setActive}>
