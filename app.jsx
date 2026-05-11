@@ -64,8 +64,7 @@ function App() {
   return (
     <>
       {!loaded && <PageLoader onDone={() => setLoaded(true)} />}
-      <TopBar active={active} />
-      <SideNav active={active} onJump={jump} />
+      <TopBar active={active} onJump={jump} />
       <main className="scroller">
         <SnapSection id="home" onInView={setActive}>
           <Hero onOpen={jump} cloverMode={tweaks.cloverMode} />

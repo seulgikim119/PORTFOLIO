@@ -14,13 +14,16 @@
 - 계획만 기록하고 끝내지 않으며, 최종 반영 파일과 변경 요지를 작업 로그에 남긴다.
 
 ## 이번 작업 목표
-- 01 · Hope 섹션 타이틀을 줄바꿈 없이 1줄로 유지되도록 CSS 오버라이드 적용
-- ethicallifeworld.com UX/UI 패턴 분석 → 포트폴리오 반영
-- 페이지 최초 진입 시 로딩 인트로 시퀀스(`PageLoader`) 추가
-- Hero 섹션에 "AVAILABLE FOR WORK" 실시간 상태 배지 추가
-- Hope 섹션 하단에 툴/역량 크레덴셜 스트립 추가
+- `assets/js/components.jsx`에 몰려 있던 컴포넌트를 섹션/공통/레이아웃 단위로 분리해 유지보수성을 높인다.
+- 분리 과정에서 발생한 한글 깨짐과 JSX 오류를 원본 Git 텍스트 기준으로 복구한다.
+- 별도 관리용으로 만든 `assets/js/README.md`는 유지하지 않고, 파일 구조와 작업 기록을 이 `skill.md`에 통합한다.
+- 프로젝트 섹션 디자인 디벨롭 요청은 파일 구조 정리와 원본 복구를 우선 완료한 뒤 다음 작업으로 이어간다.
 
 ## 확정된 UX 정책
+- 작업 기록은 `skill.md`에 단일화하고, 별도 README 문서로 중복 관리하지 않는다.
+- 한글 깨짐 복구 시 임의 문구를 새로 작성하지 않고, Git 원본 또는 사용자가 제공한 원문을 기준으로 복원한다.
+- 현재 프로젝트는 빌드 번들러 없이 `Portfolio.html`에서 Babel script를 순서대로 로드하는 구조를 유지한다.
+- JSX 파일 분리는 `import/export` 모듈화가 아니라 전역 컴포넌트 로딩 순서 기반으로 관리한다.
 - 01 · Hope 타이틀은 데스크톱 레이아웃에서 1줄 고정(`nowrap`)으로 표시한다.
 - 카드 탐색 섹션에서는 페이지 스크롤보다 섹션 내부 카드 전환을 우선한다.
 - 카드의 첫/마지막 경계에서만 다음/이전 섹션으로 스크롤 이동을 허용한다.
@@ -54,8 +57,22 @@
             - `happiness-stage-ui` (indicator/guide)
     - `SnapSection#luck`
 
+## 파일 구조
+- `assets/js/data.js`: 포트폴리오 데이터와 tweak 기본값
+- `assets/js/common/base.jsx`: `PageLoader`, `Clover`, `LoopTicker` 등 공통 컴포넌트
+- `assets/js/sections/hero.jsx`: 첫 화면 Hero
+- `assets/js/sections/hope.jsx`: 01 · Hope 자기소개 섹션
+- `assets/js/sections/projects.jsx`: 02 · Trust 프로젝트 섹션
+- `assets/js/sections/happiness.jsx`: 03 · Happiness 취향/개인 섹션
+- `assets/js/sections/luck.jsx`: 04 · Luck Contact 섹션
+- `assets/js/layout/shell.jsx`: `SectionShell`, `SnapSection`, reveal hook, `MiniLeaf`
+- `assets/js/layout/navigation.jsx`: `TopBar`, `SideNav`
+- `assets/js/layout/tweak-panel.jsx`: edit-mode tweak panel
+- `assets/js/components.jsx`: 분리 후 호환용 placeholder. 신규 컴포넌트 코드는 위 파일에 작성한다.
+- `Portfolio.html`: Babel script 로딩 순서 관리. `data -> common -> sections -> layout -> app.jsx` 순서를 유지한다.
+
 ## 상태관리 항목
-- 변경 없음 (이번 작업은 CSS만 수정)
+- 신규 상태 추가 없음 (이번 작업은 파일 구조 분리와 원본 텍스트 복구 중심)
 - 전역(App)
   - `tweaks`
   - `tweakOpen`
@@ -82,16 +99,18 @@
 - 카드 진입 애니메이션 상태는 세션 저장 없이 런타임 상태로만 관리(추가 localStorage key 없음).
 
 ## 다음 작업
-1. 반응형 뷰(특히 모바일)에서 Hope 타이틀 1줄 고정 시 overflow 여부 확인
-2. 필요 시 모바일 구간만 `white-space: normal` 예외를 미디어쿼리로 분리
-3. 수동 검증 (이전 작업)
+1. 프로젝트 섹션 카드 회전 동작을 실제 브라우저에서 마우스휠/트랙패드로 수동 확인
+2. 프로젝트 섹션 모바일 뷰에서 카드 높이와 텍스트 overflow 여부 확인
+3. 반응형 뷰(특히 모바일)에서 Hope 타이틀 1줄 고정 시 overflow 여부 확인
+4. 필요 시 모바일 구간만 `white-space: normal` 예외를 미디어쿼리로 분리
+5. 수동 검증 (이전 작업)
    - 스크롤 진입 시 순차 등장 체감 확인
    - 초기 진입 시 bottom-center 회전 등장 자연스러운지 확인
    - `happiness-stage-wrap`가 세로 영역을 충분히 채우는지 확인
    - 카드 변경 시 애니메이션 톤 과하지 않은지 확인
    - 트랙패드/마우스휠 동시 확인
-4. 필요 시 delay(120/240ms)와 hover scale(1.03) 미세 조정
-5. 신규 추가 요소 검증
+6. 필요 시 delay(120/240ms)와 hover scale(1.03) 미세 조정
+7. 신규 추가 요소 검증
    - `PageLoader` 2.5초 타이밍이 너무 길거나 짧지 않은지 체감 확인
    - `AVAILABLE FOR WORK` 배지 문구·색상이 브랜드 톤과 맞는지 확인
    - 크레덴셜 스트립 툴 목록(`TOOLS` 상수, `components.jsx` 상단)을 실제 사용 툴 기준으로 업데이트
@@ -100,6 +119,85 @@
 ---
 
 ## 작업 로그
+### 2026-05-04 (8차) — 프로젝트 섹션 스크롤 락 미작동 원인 확인 및 보강
+- 원인 확인: 기존 프로젝트 스크롤 락은 `SectionShell` 내부 `section_shell_body`의 React `onWheelCapture`에만 연결되어 있었다.
+- 원인 확인: 휠 이벤트 타깃이 섹션 내부 요소가 아니거나, 브라우저 기본 페이지 스크롤이 먼저 진행되는 경우 프로젝트 섹션이 중앙에 있어도 락 로직이 안정적으로 실행되지 않을 수 있었다.
+- 원인 확인: 기존 중앙 판정은 섹션 중심점 오차 기준이어서 실제 snap/관성 스크롤 중 락 진입 타이밍을 놓칠 수 있었다.
+- 실제 작업 내용: 프로젝트 섹션에서 `window.addEventListener('wheel', ..., { passive: false, capture: true })`를 사용해 윈도우 캡처 단계에서 휠 이벤트를 먼저 확인하도록 변경했다.
+- 실제 작업 내용: 락 판정을 `rect.top <= 25vh && rect.bottom >= 75vh` 기준으로 바꿔 프로젝트 섹션이 화면 중앙권에 들어온 동안 안정적으로 카드 전환 모드가 유지되도록 했다.
+- 실제 작업 내용: 중간 카드에서는 `preventDefault`로 페이지 스크롤을 막고, 첫 카드 위 방향/마지막 카드 아래 방향에서는 기존처럼 스크롤 통과를 허용했다.
+- 검증: 깨진 문자 패턴 검색 결과 없음.
+- 검증: `npm run check` 통과.
+- 반영 파일: `assets/js/sections/projects.jsx`, `skill.md`
+
+### 2026-05-04 (7차) — 프로젝트 카드 스크롤 되감김 원인 확인 및 보정
+- 원인 확인: 프로젝트 휠 로직이 `wheelDeltaY` 누적값의 부호만 보고 카드 이동 방향을 결정하고 있었다.
+- 원인 확인: 트랙패드/마우스휠 관성에서 1번 카드에서 2번 카드로 이동한 직후 반대 방향의 미세 `deltaY` 이벤트가 들어오면 이를 의도적인 위 스크롤로 처리해 2번에서 1번으로 되감기는 문제가 발생할 수 있었다.
+- 실제 작업 내용: `lastMoveDirection`, `directionGuardUntil` ref를 추가해 카드 전환 직후 일정 시간 동안 직전 이동 방향과 반대인 관성 이벤트를 무시하도록 보정했다.
+- 실제 작업 내용: 기존 첫 카드/마지막 카드 경계에서 스크롤 락을 해제하는 정책은 유지했다.
+- 검증: 깨진 문자 패턴 검색 결과 없음.
+- 검증: `npm run check` 통과.
+- 반영 파일: `assets/js/sections/projects.jsx`, `skill.md`
+
+### 2026-05-04 (6차) — 프로젝트 타이틀 패널 활성 카드 연동 계획
+- 작업 전 계획: 프로젝트 카드가 스크롤로 전환될 때 상단 `project_title_panel reveal in` 영역의 텍스트도 현재 활성 프로젝트 기준으로 함께 갱신되도록 보강한다.
+- 작업 전 계획: 한글 원문은 수정하지 않고, 기존 `PROJECTS` 데이터의 `tag`, `title` 값을 그대로 사용한다.
+- 작업 전 계획: `reveal in`은 섹션 진입용 1회 클래스이므로 제거하지 않고, 패널 내부 콘텐츠에 `key={active}`와 별도 애니메이션 클래스를 적용해 프로젝트 전환마다 텍스트 변경 체감이 나게 한다.
+- 작업 전 계획: 수정 대상은 `assets/js/sections/projects.jsx`, `assets/styles.css`, 작업 기록용 `skill.md`로 제한한다.
+- 실제 작업 내용: `project_title_panel` 내부에 `project_title_content` 래퍼를 추가하고 `key={active}`를 부여해 활성 프로젝트 변경 시 상단 텍스트 콘텐츠가 다시 렌더링되도록 했다.
+- 실제 작업 내용: `project_title_content`에 `projectTitleSwap` 애니메이션을 적용해 카드 전환 시 상단 `tag`, `title` 변경이 시각적으로 드러나게 했다.
+- 검증: 깨진 문자 패턴 검색 결과 없음.
+- 검증: `npm run check` 통과.
+- 반영 파일: `assets/js/sections/projects.jsx`, `assets/styles.css`, `skill.md`
+
+### 2026-05-04 (5차) — 프로젝트 섹션 카드 회전 구조 작업 계획
+- 작업 전 계획: 사용자가 제공한 `project.png`의 큰 틀을 기준으로 프로젝트 섹션을 상단 타이틀 패널, 중앙 대형 카드, 하단 클로버 비주얼 구조로 변경한다.
+- 작업 전 계획: 한글 원문은 수정하지 않고, 기존 `PROJECTS` 데이터와 기존 버튼 문구를 그대로 사용한다. 기능과 구조, CSS 클래스와 레이아웃만 변경한다.
+- 작업 전 계획: 기존 좌측 목록/우측 상세 방식(`trust_rail`, `trust_detail`)을 스크롤 기반 단일 카드 노출 방식으로 변경한다.
+- 작업 전 계획: 프로젝트 섹션 중심이 화면 중앙에 오면 휠 이벤트를 섹션 내부에서 소비해 페이지 스크롤을 잠그고, 카드가 우측에서 중앙으로 들어온 뒤 좌측으로 빠지는 회전 전환을 구현한다.
+- 작업 전 계획: 첫 카드에서 위로 스크롤하거나 마지막 카드에서 아래로 스크롤할 때는 스크롤 락을 해제해 이전/다음 섹션으로 이동할 수 있게 한다.
+- 작업 전 계획: 수정 대상은 `assets/js/sections/projects.jsx`, `assets/styles.css`, 작업 기록용 `skill.md`로 제한한다.
+- 실제 작업 내용: `TrustSection`을 기존 목록/상세 레이아웃에서 `project_stage`, `project_title_panel`, `project_card_viewport`, `project_rotate_card`, `project_clover_anchor` 구조로 변경했다.
+- 실제 작업 내용: `active`, `stageRef`, `wheelLockUntil`, `wheelDeltaY`를 사용해 프로젝트 섹션 중심 진입 시 휠 스크롤을 카드 전환으로 소비하도록 구현했다.
+- 실제 작업 내용: 첫 카드에서 위 방향, 마지막 카드에서 아래 방향 스크롤은 `preventDefault`하지 않아 이전/다음 섹션으로 이동 가능하게 했다.
+- 실제 작업 내용: 카드 역할을 `active`, `prev`, `next`, `hidden`으로 나누고, CSS에서 `transform-origin: 50% 100%`로 하단 중심 기준 회전 이동을 적용했다.
+- 실제 작업 내용: `project.png`의 큰 틀을 반영해 연한 그린 배경, 코랄 라인 타이틀 패널, 중앙 대형 카드, 하단 클로버 비주얼 스타일을 추가했다.
+- 실제 작업 내용: 한글 깨짐 방지를 위해 새로 추가되는 고정 문구는 유니코드 이스케이프 방식으로 표기했고, 프로젝트별 한글 문구는 기존 `PROJECTS` 데이터를 그대로 참조했다.
+- 검증: 깨진 문자 패턴 검색 결과 없음.
+- 검증: `npm run check` 통과.
+- 반영 파일: `assets/js/sections/projects.jsx`, `assets/styles.css`, `skill.md`
+
+### 2026-05-04 (4차) — README 기록 통합 및 단일 문서화
+- 작업 전 계획: `assets/js/README.md`에 적어둔 파일 구조 안내를 별도 파일로 관리하지 않고, 누적 작업 문서인 `skill.md`에 통합한다.
+- 작업 전 계획: 오늘 진행한 파일 구조 분리, 한글 깨짐 복구, 검증 내용을 순서대로 작업 로그에 남긴다.
+- 실제 작업 내용: `skill.md`의 이번 작업 목표, 확정된 UX 정책, 화면 구조, 파일 구조, 상태관리 항목, localStorage key 설계, 다음 작업을 최신 상태로 갱신했다.
+- 실제 작업 내용: 별도 README의 파일 구조 설명을 `skill.md`의 `파일 구조` 항목으로 이동했다.
+- 반영 파일: `skill.md`
+
+### 2026-05-04 (3차) — 한글 깨짐 및 JSX 오류 원본 복구
+- 작업 전 계획: 분리된 JSX 파일에서 깨진 한글과 문법 오류를 검색하고, 임의 문구 작성 없이 Git 원본 `assets/js/components.jsx` 텍스트를 기준으로 재분리한다.
+- 실제 작업 내용: `git show HEAD:assets/js/components.jsx`로 정상 한글 원본을 확인했다.
+- 실제 작업 내용: `common/base.jsx`, `sections/hope.jsx`, `sections/projects.jsx`, `sections/happiness.jsx`, `sections/luck.jsx`, `sections/hero.jsx`, `layout/shell.jsx`, `layout/tweak-panel.jsx`, `layout/navigation.jsx`를 원본 기준으로 다시 생성했다.
+- 실제 작업 내용: 깨진 문자 패턴(`?쨌`, `?꾨`, `?섎`, `쨌`, `??` 등)을 검색해 더 이상 검출되지 않음을 확인했다.
+- 실제 작업 내용: `npm run check`를 실행해 기본 npm 스크립트 동작을 확인했다.
+- 반영 파일: `assets/js/common/base.jsx`, `assets/js/sections/hope.jsx`, `assets/js/sections/projects.jsx`, `assets/js/sections/happiness.jsx`, `assets/js/sections/luck.jsx`, `assets/js/sections/hero.jsx`, `assets/js/layout/shell.jsx`, `assets/js/layout/tweak-panel.jsx`, `assets/js/layout/navigation.jsx`
+
+### 2026-05-04 (2차) — JS 컴포넌트 섹션별 파일 분리
+- 작업 전 계획: 현재 프로젝트가 번들러 없이 `Portfolio.html`에서 Babel script를 직접 읽는 구조이므로 `import/export` 도입 없이 전역 컴포넌트 로딩 순서 기반으로 분리한다.
+- 실제 작업 내용: 기존 `assets/js/components.jsx`의 내용을 역할별 파일로 분리했다.
+- 실제 작업 내용: 공통 컴포넌트는 `assets/js/common/base.jsx`, 섹션 컴포넌트는 `assets/js/sections/*.jsx`, 레이아웃/내비 컴포넌트는 `assets/js/layout/*.jsx`로 이동했다.
+- 실제 작업 내용: `Portfolio.html`에 새 JSX 파일들의 script 태그를 추가해 `data.js` 이후, `app.jsx` 이전에 순서대로 로드되도록 했다.
+- 실제 작업 내용: 기존 `assets/js/components.jsx`는 분리 안내용 placeholder로 축소했다.
+- 실제 작업 내용: 작업 중 임시로 `assets/js/README.md`를 추가했으나, 이후 사용자 요청에 따라 `skill.md`로 통합하고 삭제하기로 결정했다.
+- 반영 파일: `Portfolio.html`, `assets/js/components.jsx`, `assets/js/common/base.jsx`, `assets/js/sections/hope.jsx`, `assets/js/sections/projects.jsx`, `assets/js/sections/happiness.jsx`, `assets/js/sections/luck.jsx`, `assets/js/sections/hero.jsx`, `assets/js/layout/shell.jsx`, `assets/js/layout/tweak-panel.jsx`, `assets/js/layout/navigation.jsx`
+
+### 2026-05-04 (1차) — 프로젝트 섹션 디자인 요청 분석
+- 요청: `image 19.png` 기반으로 project 섹션 구조를 잡고, `project.png` 기반으로 디자인을 디벨롭해 반영
+- 작업 전 확인: 프로젝트 섹션은 기존 `TrustSection`으로 구현되어 있으며, 프로젝트 데이터는 `assets/js/data.js`의 `PROJECTS` 배열에서 관리됨을 확인했다.
+- 작업 전 확인: 기존 프로젝트 섹션은 좌측 프로젝트 목록(`trust_rail`)과 우측 상세 카드(`trust_detail`) 구조로 구성되어 있었다.
+- 실제 작업 내용: 상단 타이틀 박스, 큰 콘텐츠 카드, 하단 클로버 비주얼을 반영하는 방향으로 수정 계획을 잡았으나, 이후 사용자가 파일 정리를 우선 요청해 실제 디자인 변경은 진행하지 않았다.
+- 다음 연결 작업: 파일 구조 정리와 한글 복구가 완료된 상태에서 `assets/js/sections/projects.jsx`와 `assets/styles.css`를 중심으로 프로젝트 섹션 디자인 디벨롭을 진행한다.
+
 ### 2026-04-23 (4차) — 전체 파일 코드 정리
 - 작업 전 계획: 기능 동작과 사용자 문구는 유지하고, `app.jsx`, `assets/js/data.js`, `assets/js/components.jsx`를 중심으로 들여쓰기, 배열/객체 포맷, 중복/미사용 코드 같은 가독성 이슈를 정리한다.
 - 작업 전 계획: 대규모 구조 변경이나 신규 기능 추가 없이, 현재 동작을 유지하는 범위에서 읽기 쉬운 형태로 코드 스타일을 맞춘다.
