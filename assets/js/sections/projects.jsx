@@ -141,12 +141,6 @@ function TrustSection() {
             </button>
           ))}
         </div>
-
-        <div className="project_clover_anchor" aria-hidden="true">
-          <div className="project_clover_crop">
-            <Clover size={920} mode="photo" rotation={45} />
-          </div>
-        </div>
       </div>
     </SectionShell>
   );

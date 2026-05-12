@@ -96,7 +96,6 @@
                     null}
                   </div>
                   <h3 className="happiness_card_title">{h.title}</h3>
-                  <p className="happiness_card_desc">"{h.note}"</p>
                   <div className="happiness_card_footer">
                     <span className="happiness_card_avatar">{getInitial(h.title)}</span>
                     <span>{h.location || 'Seoul, KR'}</span>

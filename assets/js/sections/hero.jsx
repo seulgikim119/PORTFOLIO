@@ -15,6 +15,7 @@
   }, []);
 
   const cloverSize = Math.min(720, vw > 1100 ? vw * 1 : vw * 1);
+  const cloverRotation = hover >= 0 ? hover * -90 : 0;
 
   return (
     <div className="hero_wrap">
@@ -47,7 +48,9 @@
               key={l.key}
               className="leaf_row"
               onMouseEnter={() => setHover(i)}
+              onFocus={() => setHover(i)}
               onMouseLeave={() => setHover(-1)}
+              onBlur={() => setHover(-1)}
               onClick={() => onOpen(l.key)}>
                 <span className="mono" style={{ fontSize: 10, color: 'var(--ink-mute)' }}>
                   0{i + 1}
@@ -77,7 +80,7 @@
               mode={cloverMode}
               size={cloverSize}
               activeIdx={hover}
-              rotation={0}
+              rotation={cloverRotation}
               smooth={true}
               />
 

@@ -63,8 +63,8 @@ const PROJECTS = [
     tag: "팀 프로젝트, Web, 반응형, #UI/UX",
     siteUrl: "https://angbaebultti.github.io/mmca/",
     planUrl: "https://www.figma.com/deck/FVvLaHkuYTIkOaV17pe2VF/-%ED%8C%80%ED%94%8C1-3%EC%A1%B0--%EA%B2%B0%EA%B3%BC%EB%B3%B4%EA%B3%A0%EC%84%9C_MMCA--Izoa%EC%A1%B0---%EB%B3%B5%EC%82%AC---%EB%B3%B5%EC%82%AC-?node-id=12016-84&viewport=-236%2C-239%2C1.06&t=UdHnOugXlQbCuwJ8-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1",
-    problem: "전 세계 문화기관들은 디지털 경험을 통해 전시 탐색부터 방문 계획까지의 흐름을 연결하는 방향으로 나아가고 있지만 MMCA 웹사이트는 이 흐름을 충분히 반영하지 못하고 있어 온라인 전시 탐색이 실제 방문으로 이어지지 않음을 발견 하였습니다",
-    hypothesis: "전시 정보와 방문/예약 흐름을 자연스럽게 연결하면 탐색이 쉬워지고 방문 전환율이 개선될 것으로 보았습니다.",
+    problem: "기존 사이트는 기관 중심 구조로 되어 있어 사용자가 현재 전시, 방문 정보, 예약 흐름을 한 번에 이해하기 어려웠으며 특히 해외 사용자의 경우 번역과 정보 구조 문제로 인해 전시를 발견하더라도 실제 방문까지 이어지지 않는 경우가 많다고 생각했습니다.",
+    hypothesis: "사용자 유형을 빠르게 방문을 결정하는 사용자와 전시를 깊게 탐색하는 사용자로 나누어 분석하여 이를 바탕으로 전시 발견 → 전시 이해 → 방문 판단 → 예약흐름을 중심으로 UX를 재설계했습니다",
     solution: "전시 중심 정보구조와 방문 유도 CTA를 결합해 탐색 흐름을 단순화했습니다.",
     work: "PM, 기획, 인트로페이지 구현, 방문정보페이지 설계 및 반응형 구현",
     imageUrl: "assets/projects/mmca.png",
@@ -87,7 +87,7 @@ const PROJECTS = [
     tag: "App, 팀프로젝트, 기획, 주류추천, 페어링" ,
     siteUrl: "#",
     planUrl: "#",
-    problem: "",
+    problem: "주류 소비는 ‘많이 마시는 시장’에서 ‘잘 고르는 시장’으로 변화하고 있지만 사용자들은 여전히 자신의 취향과 상황에 맞는 주류를 고르기 어려워하는 문제점이 있다고 생각하였습니다.",
     hypothesis: "",
     solution: "",
     work: "",
@@ -99,15 +99,13 @@ const PROJECTS = [
 const HOBBIES = [
   {
     title: "Escape Room Lover",
-    note: "문제를 단계적으로 풀어나가며 함께 탈출함으로써 성취감을 느낍니다",
-    imageUrl: "",
+    imageUrl: "assets/hobboes/escape-room-lover.jpg",
     imageAlt: "Escape Room Lover",
     location: "Seoul, KR",
     tone: "light"
   },
   {
     title: "Traveler",
-    note: "새로운 곳으로 떠나 새로운 경험을하며 식견을 넓혀나갑니다.",
     imageUrl: "",
     imageAlt: "Travel Observer",
     location: "Seoul, KR",
@@ -115,7 +113,6 @@ const HOBBIES = [
   },
   {
     title: "Take a photo",
-    note: "찰나의 기록",
     imageUrl: "",
     imageAlt: "Street Photographer",
     location: "Gachang, KR",
